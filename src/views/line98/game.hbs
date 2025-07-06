@@ -1,0 +1,124 @@
+{{!< layouts/main}} <div class="p-4">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Line98</h1>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Game Board -->
+      <div class="lg:col-span-2">
+        <div class="card">
+          <div>
+            <div id="game-board" class="game-board grid grid-cols-9 gap-1 w-full">
+              {{#each gameState.board}}
+              {{#each this}}
+              <div class="board-cell aspect-square flex items-center justify-center" data-x="{{@index}}"
+                data-y="{{@../index}}">
+                {{#if this}}
+                {{#if (eq this.status "cur")}}
+                <div class="ball" data-color="{{this.color}}"
+                  style="background: linear-gradient(135deg, {{this.color}} 0%, {{this.color}}dd 100%);">
+                  <div class="ball-inner"></div>
+                </div>
+                {{else if (eq this.status "next")}}
+                <div class="small-ball" data-color="{{this.color}}"
+                  style="background: linear-gradient(135deg, {{this.color}} 0%, {{this.color}}dd 100%);">
+                  <div class="ball-inner"></div>
+                </div>
+                {{/if}}
+                {{else}}
+                <div class="empty-cell"></div>
+                {{/if}}
+              </div>
+              {{/each}}
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Info Panel -->
+      <div class="space-y-4">
+        <!-- Score -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Score</div>
+          </div>
+          <div class="card-content">
+            <div class="text-3xl font-bold text-blue-600 score-display">{{gameState.score}}</div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="card">
+          <div class="card-content space-y-3">
+            <!-- Start New Game -->
+            <form action="/line98/start" method="POST">
+              <button type="submit" class="btn btn-outline w-full">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                  </path>
+                </svg>
+                Restart Game
+              </button>
+            </form>
+
+            <!-- Undo/Redo -->
+            <div class="btn-group">
+              <button id="undo" class="btn btn-outline btn-sm w-full" {{#unless gameState.undo}}disabled{{/unless}}>
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                </svg>
+                Undo
+              </button>
+              <button id="redo" class="btn btn-outline btn-sm w-full" {{#unless gameState.redo}}disabled{{/unless}}>
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 10H11a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6"></path>
+                </svg>
+                Redo
+              </button>
+            </div>
+
+
+            <!-- Suggest Move -->
+            <button id="hint" class="btn btn-default w-full" {{#if gameState.gameOver}}disabled{{/if}}>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                </path>
+              </svg>
+              Get Hint
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Game Status -->
+        <div class="alert alert-destructive hidden" id="gameOver">
+          <div class="alert-title">Game Over!</div>
+          <div class="alert-description">Final Score: <span class="score-display">{{gameState.score}}</span></div>
+          <form action="/line98/start" method="POST" class="mt-3">
+            <button type="submit" class="btn btn-destructive w-full">
+              Play Again
+            </button>
+          </form>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+          <div class="instructions-title">How to Play:</div>
+          <ul class="instructions-list">
+            <li>• Click a ball to select and move</li>
+            <li>• Form lines of 5+ same colors</li>
+            <li>• Use Hint for suggestions</li>
+            <li>• Use Undo/Redo to manage moves</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>

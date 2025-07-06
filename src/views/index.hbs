@@ -1,0 +1,90 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+
+  <div class="absolute top-4 right-6 space-x-4">
+    {{#if user}}
+    <span class="text-gray-700">Hello, {{user.nickname}}</span>
+    <a href="/profile" class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Profile</a>
+    {{else}}
+    <a href="/sign-in" class="text-indigo-700 font-medium hover:underline">Sign in</a>
+    <a href="/sign-up" class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md">Sign up</a>
+    {{/if}}
+  </div>
+
+  <div class="w-full max-w-2xl">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Round 2 Test</h1>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
+      <!-- Fibonacci 100 Card -->
+      <div
+        class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 flex flex-col justify-between">
+        <div class="text-center p-6">
+          <div class="mx-auto mb-2 p-3 bg-purple-100 rounded-full w-fit">
+            <!-- TrendingUp icon placeholder -->
+            <svg class="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M3 17l6-6 4 4 8-8" />
+              <path d="M14 7h7v7" />
+            </svg>
+          </div>
+          <h2 class="text-lg font-semibold">Fibonacci 100</h2>
+          <p class="text-sm text-gray-600">Find 100th fibonacci number</p>
+        </div>
+        <div class="px-6 pb-6">
+          <a href="/fib100" class="block w-full">
+            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md">Show</button>
+          </a>
+        </div>
+      </div>
+
+      <!-- Line 98 Card -->
+      <div
+        class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 flex flex-col justify-between">
+        <div class="text-center p-6">
+          <div class="mx-auto mb-2 p-3 bg-red-100 rounded-full w-fit">
+            <svg class="h-8 w-8 text-red-600" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" />
+              <circle cx="12" cy="12" r="9" />
+              <line x1="11" y1="9" x2="11" y2="9.01" />
+              <line x1="15" y1="8" x2="15" y2="8.01" />
+              <line x1="14" y1="12" x2="14" y2="12.01" />
+            </svg>
+          </div>
+          <h2 class="text-lg font-semibold">Line 98</h2>
+          <p class="text-sm text-gray-600">
+            Clone of <a href="https://www.line98.vn/v/line-98-co-dien" target="_blank"
+              class="text-blue-500 underline">Line 98</a>
+          </p>
+        </div>
+        <div class="px-6 pb-6">
+          <a href="/line98" class="block w-full">
+            <button class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md">Play</button>
+          </a>
+        </div>
+      </div>
+
+      <!-- Caro Game Card -->
+      <div
+        class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 flex flex-col justify-between">
+        <div class="text-center p-6">
+          <div class="mx-auto mb-2 p-3 bg-green-100 rounded-full w-fit">
+            <!-- Grid3X3 icon placeholder -->
+            <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path
+                d="M3 3h6v6H3zM9 3h6v6H9zM15 3h6v6h-6zM3 9h6v6H3zM9 9h6v6H9zM15 9h6v6h-6zM3 15h6v6H3zM9 15h6v6H9zM15 15h6v6h-6z" />
+            </svg>
+          </div>
+          <h2 class="text-lg font-semibold">Caro Game</h2>
+          <p class="text-sm text-gray-600">X - O game</p>
+        </div>
+        <div class="px-6 pb-6">
+          <a href="/caro" class="block w-full">
+            <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md">Play</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

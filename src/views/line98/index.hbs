@@ -1,0 +1,40 @@
+{{!< layouts/main}} <div class="min-h-screen flex items-center justify-center">
+    <div class="text-center">
+        <h1 class="text-6xl font-bold text-gray-800 mb-4">Line98</h1>
+        <p class="text-xl text-gray-600 mb-8">Connect 5 or more balls of the same color!</p>
+
+        <div class="card max-w-md mx-auto">
+            <div class="card-content">
+                <div class="space-y-4 text-left text-sm text-gray-600 mb-6 mt-6">
+                    <div class="flex items-center">
+                        <div class="badge badge-default mr-3">1</div>
+                        Click a ball to select it
+                    </div>
+                    <div class="flex items-center">
+                        <div class="badge badge-default mr-3">2</div>
+                        Click an empty cell to move
+                    </div>
+                    <div class="flex items-center">
+                        <div class="badge badge-default mr-3">3</div>
+                        Form lines of 5+ same colors
+                    </div>
+                    <div class="flex items-center">
+                        <div class="badge badge-default mr-3">4</div>
+                        Use Undo/Redo to manage moves
+                    </div>
+                </div>
+
+                <form action="/line98/start" method="POST">
+                    <button type="submit" class="btn btn-default w-full btn-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"
+                            class="w-5 h-5 mr-2">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+
+                        Start New Game
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>

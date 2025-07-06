@@ -7,14 +7,17 @@ export interface Position {
 export interface Ball {
   color: string;
   position: Position;
-  status: 'normal' | 'small'
+  status: 'cur' | 'next'
 }
 
 export class GameState {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return
-  board: (Ball | null)[][] = Array(9).fill(null).map(() => Array(9).fill(null));
+  board: (Ball | null)[][] = Array.from({ length: 9 }, () =>
+    Array.from({ length: 9 }, () => null)
+  );
   score = 0;
-  nextBalls: Ball[] = [];
   gameOver = false;
+  undo = false;
+  redo = false;
 }
 

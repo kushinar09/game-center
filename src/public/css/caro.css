@@ -1,0 +1,405 @@
+/* Card Components */
+.card {
+  @apply bg-white rounded-lg border border-gray-200 shadow-sm;
+}
+
+.card-header {
+  @apply flex flex-col space-y-1.5 p-6 pb-2;
+}
+
+.card-title {
+  @apply text-2xl font-semibold leading-none tracking-tight;
+}
+
+.card-content {
+  @apply p-6 pt-0;
+}
+
+/* Badge Components */
+.badge {
+  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+}
+
+.badge-outline {
+  @apply border-input bg-background hover:bg-accent hover:text-accent-foreground;
+}
+
+.badge-default {
+  @apply border-transparent bg-primary text-primary-foreground hover:bg-primary/80;
+}
+
+.badge-secondary {
+  @apply border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80;
+}
+
+.badge-destructive {
+  @apply border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80;
+}
+
+/* Button Components */
+.btn {
+  @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+}
+
+.btn-primary {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2;
+}
+
+.btn-secondary {
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-4 py-2;
+}
+
+.btn-outline {
+  @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2;
+}
+
+.btn-sm {
+  @apply h-9 rounded-md px-3;
+}
+
+/* Alert Components */
+.alert {
+  @apply relative w-full rounded-lg border p-4;
+}
+
+.alert-description {
+  @apply text-sm;
+}
+
+/* Separator */
+.separator {
+  @apply shrink-0 bg-border h-[1px] w-full;
+}
+
+/* Game Board - Made Much Larger */
+#game-board {
+  @apply inline-block p-6 bg-amber-800 rounded-lg shadow-inner;
+  height: fit-content;
+}
+
+#board-grid {
+  max-width: none;
+}
+
+/* Game Board Cells - Increased Size */
+.board-cell {
+  width: 32px;
+  height: 32px;
+  @apply p-0 text-sm border border-gray-300 bg-gray-100 hover:bg-gray-200 cursor-pointer;
+  @apply flex items-center justify-center font-bold rounded-sm;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.board-cell:disabled {
+  @apply cursor-default hover:bg-gray-100;
+}
+
+.board-cell.cell-x {
+  @apply text-blue-600 bg-blue-50;
+}
+
+.board-cell.cell-o {
+  @apply text-red-600 bg-red-50;
+}
+
+/* Player Colors */
+.player-x {
+  @apply text-blue-600;
+}
+
+.player-o {
+  @apply text-red-600;
+}
+
+/* Game Status Colors */
+.status-your-turn {
+  @apply bg-green-500 text-white;
+}
+
+.status-winner {
+  @apply bg-green-500 text-white;
+}
+
+.status-loser {
+  @apply bg-red-500 text-white;
+}
+
+/* Grid Layout for 20x20 board */
+.grid-cols-20 {
+  display: grid;
+  grid-template-columns: repeat(20, 32px);
+  grid-template-rows: repeat(20, 32px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .board-cell {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    @apply text-xs;
+  }
+
+  .grid-cols-20 {
+    grid-template-columns: repeat(20, 28px);
+    grid-template-rows: repeat(20, 28px);
+  }
+}
+
+@media (max-width: 768px) {
+  .board-cell {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    @apply text-xs;
+  }
+
+  .grid-cols-20 {
+    grid-template-columns: repeat(20, 24px);
+    grid-template-rows: repeat(20, 24px);
+  }
+
+  #game-board {
+    @apply p-4;
+  }
+}
+
+@media (max-width: 640px) {
+  .board-cell {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    @apply text-xs;
+  }
+
+  .grid-cols-20 {
+    grid-template-columns: repeat(20, 20px);
+    grid-template-rows: repeat(20, 20px);
+  }
+
+  #game-board {
+    @apply p-2;
+    max-width: 95vw;
+  }
+}
+
+/* Scrollbar styling for game board */
+#game-board::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#game-board::-webkit-scrollbar-track {
+  @apply bg-amber-700 rounded;
+}
+
+#game-board::-webkit-scrollbar-thumb {
+  @apply bg-amber-600 rounded;
+}
+
+#game-board::-webkit-scrollbar-thumb:hover {
+  @apply bg-amber-500;
+}
+
+/* Tailwind CSS custom properties */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+}
+
+/* Additional game board enhancements */
+.board-cell:hover:not(:disabled) {
+  @apply transform scale-105 shadow-sm;
+  transition: all 0.1s ease-in-out;
+}
+
+.board-cell.cell-x:hover {
+  @apply bg-blue-100;
+}
+
+.board-cell.cell-o:hover {
+  @apply bg-red-100;
+}
+
+/* Game board container improvements */
+.game-board-container {
+  @apply flex items-center justify-center w-full;
+  min-height: 600px;
+}
+
+.game-cell {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.game-cell:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.game-cell:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.game-cell.placed {
+  animation: placeAnimation 0.3s ease-out;
+}
+
+@keyframes placeAnimation {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.badge {
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.alert {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.connection-indicator {
+  position: relative;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.board-container {
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow:
+    inset 0 4px 8px rgba(0, 0, 0, 0.3),
+    0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.game-grid {
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.status-indicator {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.turn-indicator {
+  position: relative;
+  overflow: hidden;
+}
+
+.turn-indicator.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}

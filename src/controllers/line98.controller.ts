@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Render } from '@nestjs/common';
 import { MoveBallDto } from 'src/dtos/move-ball.dto';
 import { Line98Service } from 'src/services/line98.service';
 
@@ -7,29 +7,53 @@ import { Line98Service } from 'src/services/line98.service';
 export class Line98Controller {
   constructor(private readonly line98Service: Line98Service) { }
 
+  @Get()
+  @Render('line98/index')
+  getHomePage() {
+    return { title: 'Line98' };
+  }
+
   @Post('start')
+  @Render('line98/game')
   startGame() {
-    return this.line98Service.startGame();
+    const state = this.line98Service.startGame();
+    return { gameState: state };
   }
 
   @Post('move')
-  moveBall(@Body() move: MoveBallDto) {
-    return this.line98Service.moveBall(move.from, move.to);
+  moveBall(@Body() body: any) {
+    const move: MoveBallDto = {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      from: { x: parseInt(body.fromX), y: parseInt(body.fromY) },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      to: { x: parseInt(body.toX), y: parseInt(body.toY) },
+    };
+
+    const response = this.line98Service.moveBall(move.from, move.to);
+
+    return {
+      success: true,
+      gameState: response.state,
+      path: response.path
+    };
   }
 
-  @Get('suggest')
+
+  @Post('suggest')
   getSuggestMove() {
-    return this.line98Service.suggestMovement();
+    const path = this.line98Service.suggestMovement();
+    return { path: path };
   }
 
   @Post('undo')
   undoMove() {
-    return this.line98Service.undo();
+    const state = this.line98Service.undo();
+    return { gameState: state };
   }
 
   @Post('redo')
   redoMove() {
-    return this.line98Service.redo();
+    const state = this.line98Service.redo();
+    return { gameState: state };
   }
-
 }

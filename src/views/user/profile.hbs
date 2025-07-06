@@ -1,0 +1,18 @@
+<div class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <form method="POST" action="/profile" class="bg-white p-8 rounded shadow-md w-full max-w-xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">Your Profile</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input name="username" value="{{user.username}}" readonly class="w-full p-2 border border-gray-300 rounded bg-gray-100 cursor-not-allowed" />
+      <input name="email" placeholder="Email" value="{{user.email}}" class="w-full p-2 border border-gray-300 rounded" />
+      <input name="name" placeholder="Full Name" value="{{user.name}}" class="w-full p-2 border border-gray-300 rounded" />
+      <input name="nickname" placeholder="Nickname" value="{{user.nickname}}" class="w-full p-2 border border-gray-300 rounded" />
+      <input name="age" type="number" placeholder="Age" value="{{user.age}}" class="w-full p-2 border border-gray-300 rounded" />
+    </div>
+
+    <button type="submit" class="w-full mt-6 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Update Profile</button>
+    <div class="flex justify-center mt-2">
+      <a href="/" class="text-blue-500 underline text-center">Back to Menu</a> 
+    </div>
+  </form>
+</div>

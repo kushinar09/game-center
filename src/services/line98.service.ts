@@ -26,15 +26,20 @@ export class Line98Service {
 
   moveBall(from: Position, to: Position): MoveBallResponse {
     const ball = this.getBall(from);
-    if (!ball) throw new BadRequestException('No ball at source position');
+    if (!ball || ball.status !== 'cur') return {
+      state: this.state,
+      path: []
+    }
 
     const path = this.findShortestPath(from, to);
-    if (!path) throw new BadRequestException('No valid path to destination');
+    if (!path) return {
+      state: this.state,
+      path: []
+    }
 
     this.previousState = this.cloneGameState(this.state);
     this.futureState = null; // clear redo history
 
-    // Move the ball along the path
     this.setBall(to, { ...ball, position: to });
     this.setBall(from, null);
 
@@ -44,6 +49,9 @@ export class Line98Service {
       this.generateNextBalls();
     }
 
+    this.state.undo = true;
+    this.state.redo = false;
+
     return {
       state: this.state,
       path,
@@ -51,18 +59,26 @@ export class Line98Service {
   }
 
   undo(): GameState {
-    if (!this.previousState) throw new Error('No undo available');
+    if (!this.previousState) throw new BadRequestException('No undo available');
     this.futureState = this.cloneGameState(this.state);
     this.state = this.cloneGameState(this.previousState);
     this.previousState = null;
+
+    this.state.undo = false;
+    this.state.redo = true;
+
     return this.state;
   }
 
   redo(): GameState {
-    if (!this.futureState) throw new Error('No redo available');
+    if (!this.futureState) throw new BadRequestException('No redo available');
     this.previousState = this.cloneGameState(this.state);
     this.state = this.cloneGameState(this.futureState);
     this.futureState = null;
+
+    this.state.undo = true;
+    this.state.redo = false;
+
     return this.state;
   }
 
@@ -84,7 +100,10 @@ export class Line98Service {
 
     for (let y = 0; y < BOARD_SIZE; y++) {
       for (let x = 0; x < BOARD_SIZE; x++) {
-        if (this.state.board[y][x]) balls.push({ x, y });
+        const ball = this.state.board[y][x];
+        if (ball && ball.status === 'cur') {
+          balls.push({ x, y });
+        }
       }
     }
 
@@ -98,14 +117,14 @@ export class Line98Service {
 
     for (const from of balls) {
       const ball = this.getBall(from);
-      if (!ball) continue;
+      if (!ball || ball.status !== 'cur') continue;
 
       for (const to of emptyPositions) {
         const path = this.findShortestPath(from, to);
         if (!path) continue;
 
         // Simulate move
-        this.setBall(to, { ...ball, position: to });
+        this.setBall(to, { ...ball, position: { ...to } });
         this.setBall(from, null);
 
         // 1. Immediate explosion?
@@ -118,12 +137,18 @@ export class Line98Service {
 
         // 2. Simulate nextBalls placement
         const backupBoard = this.cloneBoard();
-        const fakeNextBalls = this.cloneBalls(this.state.nextBalls);
+        const fakeNextBalls: Ball[] = [];
+        for (const b of this.state.board) {
+          for (const bs of b) {
+            if (bs && bs.status === 'next')
+              fakeNextBalls.push(bs);
+          }
+        }
         this.simulateNextBalls(fakeNextBalls);
 
         const matchAfterNext = this.getMatchedLine(to);
 
-        this.state.board = backupBoard; // restore
+        this.state.board = backupBoard; // restore board
 
         // 3. Check match length for potential
         const matchLen = matchNow.length;
@@ -149,6 +174,24 @@ export class Line98Service {
     return bestMove ? { from: bestMove.from, to: bestMove.to, path: bestMove.path } : null;
   }
 
+  private simulateNextBalls(fakeNextBalls: Ball[]) {
+    const empty = this.getEmptyPositions();
+
+    for (const ball of fakeNextBalls) {
+      if (empty.length === 0) break;
+      ball.status = 'cur';
+      this.setBall(ball.position, ball);
+    }
+  }
+
+  private cloneBoard(): (Ball | null)[][] {
+    return this.state.board.map(row =>
+      row.map(ball =>
+        ball ? { ...ball, position: { ...ball.position }, status: ball.status } : null
+      )
+    );
+  }
+
   private findShortestPath(from: Position, to: Position): Position[] | null {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const visited = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(false));
@@ -162,7 +205,6 @@ export class Line98Service {
       const { x, y } = current;
 
       if (x === to.x && y === to.y) {
-        // Reconstruct path
         const path: Position[] = [];
         let p: Position | null = to;
         while (p) {
@@ -176,10 +218,12 @@ export class Line98Service {
         const nx = x + dx;
         const ny = y + dy;
 
+        const b = this.getBall({ x: nx, y: ny });
+
         if (
           this.isInBounds(nx, ny) &&
           !visited[ny][nx] &&
-          !this.getBall({ x: nx, y: ny })
+          (!b || b.status !== 'cur')
         ) {
           visited[ny][nx] = true;
           prev[ny][nx] = current;
@@ -191,35 +235,14 @@ export class Line98Service {
     return null;
   }
 
-  private simulateNextBalls(fakeNextBalls: Ball[]) {
-    const empty = this.getEmptyPositions();
-
-    for (const ball of fakeNextBalls) {
-      if (empty.length === 0) break;
-      const index = Math.floor(Math.random() * empty.length);
-      const pos = empty.splice(index, 1)[0];
-      ball.position = pos;
-      this.setBall(pos, ball);
-    }
-  }
-
   private cloneGameState(state: GameState): GameState {
     const clone = new GameState();
     clone.board = state.board.map(row =>
       row.map(ball => ball ? { ...ball, position: { ...ball.position } } : null)
     );
-    clone.nextBalls = state.nextBalls.map(b => ({ ...b, position: { ...b.position } }));
     clone.score = state.score;
     clone.gameOver = state.gameOver;
     return clone;
-  }
-
-  private cloneBoard(): (Ball | null)[][] {
-    return this.state.board.map(row => row.map(ball => ball ? { ...ball, position: { ...ball.position } } : null));
-  }
-
-  private cloneBalls(balls: Ball[]): Ball[] {
-    return balls.map(b => ({ ...b, position: { ...b.position } }));
   }
 
   private getMatchedLine(pos: Position): Position[] {
@@ -245,6 +268,7 @@ export class Line98Service {
 
         while (
           this.isInBounds(x, y) &&
+          this.getBall({ x, y })?.status === 'cur' &&
           this.getBall({ x, y })?.color === ball.color
         ) {
           line.push({ x, y });
@@ -269,41 +293,42 @@ export class Line98Service {
       return;
     }
 
-    const nextBalls: Ball[] = [];
-
     for (let i = 0; i < 3; i++) {
       const color = COLORS[Math.floor(Math.random() * COLORS.length)];
 
       const index = Math.floor(Math.random() * emptyPositions.length);
-      const position = emptyPositions.splice(index, 1)[0]; // ensure unique positions
+      const position = emptyPositions.splice(index, 1)[0];
 
-      nextBalls.push({ color, position, status: 'small' });
+      this.setBall(position, { color, position, status: 'next' });
     }
-
-    this.state.nextBalls = nextBalls;
   }
 
   private placeNextBalls() {
-    if (this.getEmptyPositions().length < this.state.nextBalls.length) {
-      this.state.gameOver = true;
-      return;
-    }
+    let anyCleared = false;
 
-    for (const ball of this.state.nextBalls) {
-      // Place ball at its pre-defined position
-      if (!this.getBall(ball.position)) {
-        this.setBall(ball.position, ball);
+    for (let y = 0; y < 9; y++) {
+      for (let x = 0; x < 9; x++) {
+        const ball = this.state.board[y][x];
+        if (ball && ball.status === 'next') {
+          ball.status = 'cur';
+
+          const cleared = this.clearMatchingLines({ x, y });
+          if (cleared) {
+            anyCleared = true;
+          }
+        }
       }
-      // Auto-clear new lines if any
-      this.clearMatchingLines(ball.position);
     }
 
-    this.state.nextBalls = [];
+    if (this.getEmptyPositions().length === 0 && !anyCleared) {
+      this.state.gameOver = true;
+    }
   }
+
 
   private clearMatchingLines(pos: Position): Position[] {
     const ball = this.getBall(pos);
-    if (!ball) return [];
+    if (!ball || ball.status !== 'cur') return [];
 
     const directions = [
       { dx: 1, dy: 0 },   // horizontal
@@ -312,21 +337,21 @@ export class Line98Service {
       { dx: 1, dy: -1 },  // diagonal /
     ];
 
-    // eslint-disable-next-line prefer-const
-    let allMatched: Position[] = [];
+    const allMatched: Position[] = [];
 
     for (const { dx, dy } of directions) {
-      const line = [pos];
+      const line: Position[] = [pos];
 
-      // eslint-disable-next-line prefer-const
-      for (let dir of [-1, 1]) {
+      for (const dir of [-1, 1]) {
         let x = pos.x + dir * dx;
         let y = pos.y + dir * dy;
 
         while (
-          this.isInBounds(x, y) &&
-          this.getBall({ x, y })?.color === ball.color
+          this.isInBounds(x, y)
         ) {
+          const current = this.getBall({ x, y });
+          if (!current || current.color !== ball.color || current.status !== 'cur') break;
+
           line.push({ x, y });
           x += dir * dx;
           y += dir * dy;
@@ -338,7 +363,6 @@ export class Line98Service {
       }
     }
 
-    // Clear matched positions
     if (allMatched.length > 0) {
       const unique = this.deduplicatePositions(allMatched);
       for (const pos of unique) {
@@ -350,8 +374,12 @@ export class Line98Service {
     return allMatched;
   }
 
+
   private getBall(pos: Position): Ball | null {
-    return this.state.board[pos.y][pos.x];
+    const row = this.state.board[pos.y];
+    if (!row) return null;
+
+    return row[pos.x] ?? null;
   }
 
   private setBall(pos: Position, ball: Ball | null) {
@@ -362,7 +390,7 @@ export class Line98Service {
     const result: Position[] = [];
     for (let y = 0; y < BOARD_SIZE; y++) {
       for (let x = 0; x < BOARD_SIZE; x++) {
-        if (!this.state.board[y][x]) {
+        if (!this.state.board[y][x] || (this.state.board[y][x] && this.state.board[y][x]?.status !== 'cur')) {
           result.push({ x, y });
         }
       }
